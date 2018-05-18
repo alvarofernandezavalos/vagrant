@@ -1,0 +1,81 @@
+---
+- hosts: calamar
+
+  tasks:
+    - name: dime el nombre de la maquina?
+      command: cat /etc/hostname
+      register: info
+      
+    - name: mi nombre es
+      debug: var=info.stdout
+      
+    - name: sizeMe or dieMe
+      command: df -h
+      register: info
+    
+    - name: asi esta el espacio
+      debug: var=info.stdout_lines
+      
+    - name: Transfer the script
+      copy: src=/vagrant/ansible/script.sh dest=/tmp mode=0777
+
+    - name: Execute the script
+      command: sh /tmp/script.sh
+      
+    - name: Transfer the folder
+      copy: src=/vagrant/ansible/folder dest=/tmp mode=0744
+      
+# Me permite instalar paquetes deb desde internet.
+
+#    - name: Install a .deb package from the internet.
+#      become: yes
+#      apt:
+#        deb: https://dev.mysql.com/get/mysql-apt-config_0.8.10-1_all.deb
+  
+    - name: "ADD REPOS"
+      become: yes
+      apt_repository:
+        repo: "{{ item }}" 
+        state: present
+      with_items:
+         - "deb http://repo.mysql.com/apt/ubuntu/ trusty mysql-8.0"
+                 
+    - name: Install Apache2 + WGET + GIT
+      become: yes
+      apt:
+        name: "{{ item }}"
+        state: latest
+        update_cache: yes
+        cache_valid_time: 3600
+      with_items:
+        - apache2
+        - wget
+        - git
+      when: ansible_os_family == "Debian"
+    
+    - name: Install MySQL packages
+      become: yes
+      apt: 
+        name: "{{ item }}"
+        state: latest
+        update_cache: yes
+        allow_unauthenticated: yes
+        cache_valid_time: 3600
+      with_items:
+        - bundler
+        - libmysqlclient-dev
+        - python-mysqldb
+        - mysql-server
+        - mysql-client
+        - build-essential
+   
+    - name: Remove useless packages from the cache
+      become: yes
+      apt:
+        autoclean: yes
+
+    - name: Remove dependencies that are no longer required
+      become: yes
+      apt:
+        autoremove: yes
+    
