@@ -1,0 +1,13 @@
+[pulpo]
+192.168.68.10
+
+[pulpo:vars]
+ansible_user=vagrant
+ansible_ssh_private_key_file=/vagrant/ansible/vagrant_pulpo
+
+[calamar]
+192.168.68.11
+
+[calamar:vars]
+ansible_user=vagrant
+ansible_ssh_private_key_file=/vagrant/ansible/vagrant_calamar
