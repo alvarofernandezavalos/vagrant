@@ -6,8 +6,9 @@ Vagrant.configure("2") do |config|
     pulpo.vm.provision :shell, :inline => "apt-get install software-properties-common -y"
 	pulpo.vm.provision :shell, :inline => "apt-add-repository ppa:ansible/ansible"
 	pulpo.vm.provision :shell, :inline => "apt-get update"
-	pulpo.vm.provision :shell, :inline => "apt-get install ansible -y"
-    pulpo.vm.host_name = "pulpo"
+	pulpo.vm.provision :shell, :inline => "apt-get install ansible -y --no-install-recommends"
+    pulpo.vm.boot_timeout = 600
+	pulpo.vm.host_name = "pulpo"
     pulpo.vm.box = "ubuntu/xenial64"
     pulpo.vm.provider "virtualbox" do |vb|
       vb.memory = 512
@@ -19,7 +20,8 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "calamar" do |calamar|
-    calamar.vm.provision :shell, :inline => "apt-get update && apt-get install python -y"
+    calamar.vm.provision :shell, :inline => "apt-get update && apt-get install python -y --no-install-recommends"
+	calamar.vm.boot_timeout = 600
 	calamar.vm.host_name = "calamar"
     calamar.vm.box = "ubuntu/xenial64"
     calamar.vm.provider "virtualbox" do |vb|
